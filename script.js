@@ -50,7 +50,7 @@ const drawExit = () => {
 }
 
 
-// 0 = empty, 1 = wall
+// 0 = empty, 1 = wall, 2 = trap
 const map = [
   [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
   [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
@@ -59,12 +59,12 @@ const map = [
   [0,0,0,0,0,0,0,0,1,0,0,0,0,0,0],
   [0,0,0,0,0,0,0,0,1,0,0,0,0,0,0],
   [0,0,0,0,0,0,0,0,1,1,1,0,0,0,0],
-  [0,1,0,0,0,0,0,0,0,0,0,0,0,0,0],
-  [0,1,0,0,0,0,0,0,0,0,0,0,0,0,0],
-  [0,1,1,1,0,0,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-  [0,0,0,1,1,1,1,1,0,0,0,0,0,0,0],
+  [0,1,0,0,0,0,0,0,0,0,0,0,0,1,1],
+  [0,1,0,0,0,0,0,0,0,0,0,0,0,0,1],
+  [0,1,1,1,0,0,0,0,0,0,0,0,0,0,1],
+  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+  [0,0,0,1,1,1,1,1,2,1,1,1,1,1,1],
   [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
   [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], // 15 rowssss
   
@@ -87,8 +87,11 @@ function drawMap() {
     //วาด กระดาน
   for (let y = 0; y < ROWS; y++) {
     for (let x = 0; x < COLS; x++) {
-      if (map[y][x] === 1) {
+      // wall
+      if (map[y][x] === 1) { 
         ctx.fillStyle = "#555";
+      } else if (map[y][x] === 2){
+        ctx.fillStyle = "red";
       } else {
         ctx.fillStyle = "#558073";
       }
@@ -110,11 +113,13 @@ function drawMap() {
 }
 
 function isWalkable(x, y) {
-  return x >= 0 && x < COLS && y >= 0 && y < ROWS && map[y][x] === 0;
+  // COLS = 15 , ROWS = 15
+  return x >= 0 && x < COLS && y >= 0 && y < ROWS && map[y][x] === 0 || map[y][x] === 2;
 }
 
 document.addEventListener("keydown", (e) => {
   let dx = 0, dy = 0;
+
   if (e.key === "ArrowUp") dy = -1;
   if (e.key === "ArrowDown") dy = 1;
   if (e.key === "ArrowLeft") dx = -1;
@@ -122,7 +127,7 @@ document.addEventListener("keydown", (e) => {
 
   const newX = player.x + dx;
   const newY = player.y + dy;
-
+if(["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key)){
   if (isWalkable(newX, newY)) {
     player.x = newX;
     player.y = newY;
@@ -130,13 +135,19 @@ document.addEventListener("keydown", (e) => {
     if (player.x === exit.x && player.y === exit.y){
         drawMap();
         setTimeout(() => alert("💁🏻‍♂️You Win!"),10);
+    }else if(player.x === killer.x && player.y === killer.y){
+      setTimeout(() => alert('🧟‍♂️Killed'));
     }
 
-    moveKiller(); // ให้มัมมี่ไล่ตาม
+    // เรียก moveKiller() เมื่อ Player ขยับได้เท่านั้น
+    moveKiller();
   }
+}
 
   drawMap();
 });
+
+// A star
 function aStar(start, goal) {
   const openSet = [start];
   const cameFrom = {};
@@ -154,7 +165,8 @@ function aStar(start, goal) {
     }
   }
 
-  gScore[key(start)] = 0;
+  gScore[key(start)] = 0
+  ;
   fScore[key(start)] = heuristic(start, goal);
 
   while (openSet.length > 0) {
@@ -207,54 +219,6 @@ function reconstructPath(cameFrom, current) {
   }
   return path;
 }
-
-
-
-// ก่อนนนนนน
-function aStar(start, goal) {
-    const openSet = [start];
-    const cameFrom = {};
-    const gScore = {};
-    const fScore = {};
-  
-    function key(pos) {
-      return `${pos.x},${pos.y}`;
-    }
-  
-    for (let y = 0;y <  ROWS; y++) {
-      for (let x = 0; x < COLS; x++) {
-        gScore[key({ x, y })] = Infinity;
-        fScore[key({ x, y })] = Infinity;
-      }
-    }
-  
-    gScore[key(start)] = 0;
-    fScore[key(start)] = heuristic(start, goal);
-  
-    while (openSet.length > 0) {
-      openSet.sort((a, b) => fScore[key(a)] - fScore[key(b)]);
-      const current = openSet.shift();
-  
-      if (current.x === goal.x && current.y === goal.y) {
-        return reconstructPath(cameFrom, current);
-      }
-  
-      for (const neighbor of getNeighbors(current)) {
-        const tentativeG = gScore[key(current)] + 1;
-        if (tentativeG < gScore[key(neighbor)]) {
-          cameFrom[key(neighbor)] = current;
-          gScore[key(neighbor)] = tentativeG;
-          fScore[key(neighbor)] = tentativeG + heuristic(neighbor, goal);
-  
-          if (!openSet.some(n => n.x === neighbor.x && n.y === neighbor.y)) {
-            openSet.push(neighbor);
-          }
-        }
-      }
-    }
-  
-    return []; // no path
-  }
   
   function heuristic(a, b) {
     return Math.abs(a.x - b.x) + Math.abs(a.y - b.y); // Manhattan distance
@@ -286,7 +250,11 @@ function aStar(start, goal) {
   function moveKiller() {
     const path = aStar(killer, player);
     if (path.length > 1) {
-      killer = path[1]; // เดินทีละช่อง
+
+      //killer = path[2]; // เดินทีละช่อง
+      killer = path[Math.min(2, path.length - 1,)]; //เดินทีละ ช่อง แต่ 2 ครั้ง
+      console.log("walk")
+      
     }
   
     if (killer.x === player.x && killer.y === player.y) {
