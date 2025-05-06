@@ -11,6 +11,9 @@ img_player.src = "pic_ob/DBgirl.png";
 const img_killer = new Image();
 img_killer.src = "pic_ob/DBknife.png";
 
+const img_exit = new Image();
+img_exit.src = "pic_ob/DBhole.png"
+
 
 const SCALE = 1.5; // ขยายรูป x เท่า
 
@@ -24,6 +27,7 @@ const drawPlayer = () => {
 
   ctx.drawImage(img_player, offsetX, offsetY, drawWidth, drawHeight);
 };
+
 const drawKiller = () => {
     const drawWidth = 60;
     const drawHeight = TILE_SIZE * SCALE;
@@ -35,22 +39,32 @@ const drawKiller = () => {
     ctx.drawImage(img_killer, offsetX, offsetY, drawWidth, drawHeight);
   };
 
+const drawExit = () => {
+  const drawWidth = 60;
+  const drawHeight = TILE_SIZE * SCALE;
+
+  const offsetX = exit.x * TILE_SIZE - (drawWidth - TILE_SIZE) / 2;
+  const offsetY = exit.y * TILE_SIZE - (drawHeight - TILE_SIZE);
+
+  ctx.drawImage(img_exit, offsetX, offsetY, drawWidth, drawHeight);
+}
+
 
 // 0 = empty, 1 = wall
 const map = [
   [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
   [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,1,1,1,0,0,0,0,0,0,0,0],
+  [0,0,0,0,1,0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,1,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,1,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,1,1,1,0,0,0,0],
+  [0,1,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [0,1,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [0,1,1,1,0,0,0,0,0,0,0,0,0,0,0],
   [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
   [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,1,1,1,1,1,0,0,0,0,0,0,0],
   [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
   [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], // 15 rowssss
   
@@ -85,14 +99,12 @@ function drawMap() {
       ctx.strokeRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
     }
   }
-  
-  // Draw Exit
-  ctx.fillStyle = "green";
-  ctx.fillRect(exit.x * TILE_SIZE, exit.y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
 
   drawPlayer();
 
-  drawKiller()
+  drawKiller();
+
+  drawExit();
   
   requestAnimationFrame(drawMap); // loop ตลอดเวลา
 }
@@ -274,7 +286,7 @@ function aStar(start, goal) {
   function moveKiller() {
     const path = aStar(killer, player);
     if (path.length > 1) {
-      killer = path[2]; // เดินทีละช่อง
+      killer = path[1]; // เดินทีละช่อง
     }
   
     if (killer.x === player.x && killer.y === player.y) {
