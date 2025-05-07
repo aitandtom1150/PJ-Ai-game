@@ -60,33 +60,60 @@ const drawExit = () => {
 
 // 0 = empty, 1 = wall, 2 = trap
 const map = [
-  [0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 1, 0, 2, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 2, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 2, 0, 0],
-  [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0],
+  [1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1],
+  [0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1],
+  [0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 2, 0, 0, 0, 0, 2, 0, 0, 0, 1],
+  [0, 0, 1, 0, 2, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
+  [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0],
+  [0, 0, 0, 2, 0, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0],
+  [0, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 0, 2, 0, 0],
+  [0, 0, 0, 1, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0],
   [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0],
+  [0, 2, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0],
   [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
-  [1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 2],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], // 21 rowssss
+  [0, 0, 0, 0, 0, 0, 2, 0, 0, 2, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0],
+  [1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0],
+  [1, 1, 1, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 2, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0], // 21 rowssss
 
 ];
 
-let player = { x: 1, y: 19 };
-let killer = { x: 14, y: 2 };
-let exit = { x: 17, y: 7 }; // ทางออก
+function getRandomEmptyTile(exclude = [], minDistance = 0) {
+  let tries = 0;
+  while (tries < 1000) {
+    const x = Math.floor(Math.random() * COLS);
+    const y = Math.floor(Math.random() * ROWS);
+
+    if (map[y][x] !== 0) continue;
+
+    const tooClose = exclude.some(pos => 
+      Math.abs(pos.x - x) + Math.abs(pos.y - y) < minDistance
+    );
+
+    if (!tooClose) {
+      return { x, y };
+    }
+
+    tries++;
+  }
+
+  throw new Error("No valid spawn position found!");
+}
+
+
+// ใช้สุ่มตำแหน่งโดยไม่ให้ซ้ำกัน
+player = getRandomEmptyTile();
+killer = getRandomEmptyTile([player]);
+exit = getRandomEmptyTile([player, killer]);
+// let player = { x: 1, y: 19 };
+// let killer = { x: 14, y: 2 };
+// let exit = { x: 17, y: 7 }; // ทางออก
 let wall = { x: 1, y: 1 }
 
 img_player.onload = function () {
@@ -100,22 +127,22 @@ function drawMap() {
 
   //ctx.drawImage(bgImage,0,0,canvas.width,canvas.height);
   //วาด กระดาน
-  
+
   for (let y = 0; y < ROWS; y++) {
     for (let x = 0; x < COLS; x++) {
-  
+
       // Wall
       if (map[y][x] === 1) {
         ctx.fillStyle = "black";
         ctx.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
-  
-      // Trap
+
+        // Trap
       } else if (map[y][x] === 2) {
-        
+
         ctx.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
         ctx.drawImage(img_trap, x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
-  
-      // Checker pattern
+
+        // Checker pattern
       } else {
         if ((x + y) % 2 == 0) {
           ctx.fillStyle = "#008b9d";
@@ -131,7 +158,7 @@ function drawMap() {
     ctx.fillStyle = "rgba(0, 0, 0, 0.5)"; // สีแดงโปร่ง
     ctx.fillRect(pos.x * TILE_SIZE, pos.y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
   }
-  
+
   drawExit();
 
   drawPlayer();
@@ -274,33 +301,37 @@ let killerPaused = false;
 let killerTrail = [];
 
 function moveKiller() {
-  stack++;
-
   if (killerPaused) {
-    killerPaused = false; // หยุด 1 เทิร์น แล้วกลับมาเดินต่อ
+    killerPaused = false;
     return;
   }
 
-  if (stack % 2 !== 0) {
-    return; // เดินทุก 2 เทิร์น (ข้ามรอบนี้)
+  const path = aStar(killer, player);
+  if (path.length <= 1) return;
+
+  stack++;
+
+  let steps = 1;
+  if (stack % 3 === 0) {
+    steps = 2;
   }
 
-  const path = aStar(killer, player);
-  if (path.length > 1) {
-    // เดินทีละช่องเสมอ
-    killer = path[1];
+  // เดินตาม path ทีละก้าว โดยไม่ข้ามกำแพง
+  for (let i = 1; i <= steps && i < path.length; i++) {
+    killer = path[i];
 
-    // ทิ้งรอยเท้า
+    // บันทึกรอยเท้า
     killerTrail.push({ x: killer.x, y: killer.y });
-    if (killerTrail.length > 10) killerTrail.shift();
+    if (killerTrail.length > 20) killerTrail.shift(); // จำกัดจำนวนรอยเท้า
 
-    // กับดัก
     if (isTrap(killer.x, killer.y)) {
-      killerPaused = true; // หยุด 1 รอบ
+      killerPaused = true;
+      break; // หยุดเดินทันทีเมื่อเหยียบกับดัก
     }
 
     if (killer.x === player.x && killer.y === player.y) {
       setTimeout(() => alert("Game Over!"), 10);
+      break;
     }
   }
 }
