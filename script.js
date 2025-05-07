@@ -1,9 +1,10 @@
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 
-const TILE_SIZE = 50;
-const ROWS = 15;
-const COLS = 15;
+//const TILE_SIZE = 43.34;
+const TILE_SIZE = 31;
+const ROWS = 21;
+const COLS = 21;
 
 const img_player = new Image();
 img_player.src = "pic_ob/DBgirl.png";
@@ -14,11 +15,19 @@ img_killer.src = "pic_ob/DBknife.png";
 const img_exit = new Image();
 img_exit.src = "pic_ob/DBhole.png"
 
+const img_wall = new Image();
+img_wall.src = "pic_ob/DBwall.png"
 
-const SCALE = 1.5; // ขยายรูป x เท่า
+const img_trap = new Image();
+img_trap.src = "pic_ob/DBtrap.png";
+
+const bgImage = new Image();
+bgImage.src = "pic_ob/dirt.png"
+
+const SCALE = 2; // ขยายรูป x เท่า
 
 const drawPlayer = () => {
-  const drawWidth = 60;
+  const drawWidth = 40;
   const drawHeight = TILE_SIZE * SCALE;
 
   // คำนวณให้ภาพขยายออกด้านบน/ซ้าย/ขวา แต่ไม่ล้นล่าง
@@ -29,7 +38,7 @@ const drawPlayer = () => {
 };
 
 const drawKiller = () => {
-  const drawWidth = 60;
+  const drawWidth = 40;
   const drawHeight = TILE_SIZE * SCALE;
 
   // คำนวณให้ภาพขยายออกด้านบน/ซ้าย/ขวา แต่ไม่ล้นล่าง
@@ -47,75 +56,101 @@ const drawExit = () => {
   const offsetY = exit.y * TILE_SIZE - (drawHeight - TILE_SIZE);
 
   ctx.drawImage(img_exit, offsetX, offsetY, drawWidth, drawHeight);
-}
-
+};
 
 // 0 = empty, 1 = wall, 2 = trap
 const map = [
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0],
-  [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1],
-  [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-  [0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1],
-  [0, 0, 0, 0, 0, 1, 1, 0, 1, 1, 1, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], // 15 rowssss
+  [0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 1, 0, 2, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 2, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 2, 0, 0],
+  [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0],
+  [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0],
+  [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
+  [1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 2],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], // 21 rowssss
 
 ];
 
-let player = { x: 0, y: 14 };
-let killer = { x: 9, y: 2 };
-let exit = { x: 14, y: 0 }; // ทางออก
+let player = { x: 1, y: 19 };
+let killer = { x: 14, y: 2 };
+let exit = { x: 17, y: 7 }; // ทางออก
+let wall = { x: 1, y: 1 }
 
 img_player.onload = function () {
   requestAnimationFrame(drawMap); // เริ่ม loop เมื่อโหลดรูปเสร็จ
 };
-img_killer.onload = function () {
-  requestAnimationFrame(drawMap); // เริ่ม loop เมื่อโหลดรูปเสร็จ
-};
+
+
 function drawMap() {
   // clear display 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+  //ctx.drawImage(bgImage,0,0,canvas.width,canvas.height);
   //วาด กระดาน
+  
   for (let y = 0; y < ROWS; y++) {
     for (let x = 0; x < COLS; x++) {
-      // wall
+  
+      // Wall
       if (map[y][x] === 1) {
-        ctx.fillStyle = "#555";
+        ctx.fillStyle = "black";
+        ctx.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+  
+      // Trap
       } else if (map[y][x] === 2) {
-        ctx.fillStyle = "red";
+        
+        ctx.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+        ctx.drawImage(img_trap, x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+  
+      // Checker pattern
       } else {
-        ctx.fillStyle = "#558073";
+        if ((x + y) % 2 == 0) {
+          ctx.fillStyle = "#008b9d";
+        } else {
+          ctx.fillStyle = "#00a8be";
+        }
+        ctx.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
       }
-      ctx.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
 
-      ctx.strokeStyle = "white";
-      ctx.lineWidth = 0.3;
-      ctx.strokeRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
     }
   }
+  for (const pos of killerTrail) {
+    ctx.fillStyle = "rgba(0, 0, 0, 0.5)"; // สีแดงโปร่ง
+    ctx.fillRect(pos.x * TILE_SIZE, pos.y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+  }
+  
+  drawExit();
 
   drawPlayer();
 
   drawKiller();
 
-  drawExit();
+
 
   requestAnimationFrame(drawMap); // loop ตลอดเวลา
 }
 
-function isWalkable(x, y) {
-  // COLS = 15 , ROWS = 15
-  return x >= 0 && x < COLS && y >= 0 && y < ROWS && map[y][x] === 0;
+function isPlayerWalkable(x, y) {
+  return x >= 0 && x < COLS && y >= 0 && y < ROWS && map[y][x] !== 1;
 }
+
+function isKillerWalkable(x, y) {
+  return x >= 0 && x < COLS && y >= 0 && y < ROWS && map[y][x] !== 1;
+}
+
 
 document.addEventListener("keydown", (e) => {
   let dx = 0, dy = 0;
@@ -128,7 +163,7 @@ document.addEventListener("keydown", (e) => {
   const newX = player.x + dx;
   const newY = player.y + dy;
   if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key)) {
-    if (isWalkable(newX, newY)) {
+    if (isPlayerWalkable(newX, newY)) {
       player.x = newX;
       player.y = newY;
 
@@ -139,9 +174,14 @@ document.addEventListener("keydown", (e) => {
         setTimeout(() => alert('🧟‍♂️Killed'));
       }
 
-      // เรียก moveKiller() เมื่อ Player ขยับได้เท่านั้น
+      if (isTrap(player.x, player.y)) {
+        // Player เหยียบ trap: ให้ killer เดินทันทีอีกครั้ง (นับเป็นเสียเทิร์น)
+        moveKiller();
+      }
+
       moveKiller();
     }
+
   }
 
   drawMap();
@@ -198,7 +238,7 @@ function heuristic(a, b) {
   return Math.abs(a.x - b.x) + Math.abs(a.y - b.y); // Manhattan distance
 }
 
-function getNeighbors(pos) {
+function getNeighbors(pos, isForKiller = false) {
   const dirs = [
     { x: 0, y: -1 },
     { x: 0, y: 1 },
@@ -208,8 +248,9 @@ function getNeighbors(pos) {
 
   return dirs
     .map(d => ({ x: pos.x + d.x, y: pos.y + d.y }))
-    .filter(n => isWalkable(n.x, n.y));
+    .filter(n => isForKiller ? isKillerWalkable(n.x, n.y) : isPlayerWalkable(n.x, n.y));
 }
+
 
 function reconstructPath(cameFrom, current) {
   const path = [current];
@@ -220,20 +261,42 @@ function reconstructPath(cameFrom, current) {
   return path;
 }
 
+// Trap
+function isTrap(x, y) {
+  return map[y][x] === 2;
+}
+
 // Killer เดิน
 let stack = 0;
+// Trap 
+let killerPaused = false;
+// รอยเท้า
+let killerTrail = [];
+
 function moveKiller() {
+  stack++;
+
+  if (killerPaused) {
+    killerPaused = false; // หยุด 1 เทิร์น แล้วกลับมาเดินต่อ
+    return;
+  }
+
+  if (stack % 2 !== 0) {
+    return; // เดินทุก 2 เทิร์น (ข้ามรอบนี้)
+  }
+
   const path = aStar(killer, player);
   if (path.length > 1) {
-    stack++;
-    if (stack % 2 == 0) {
-      killer = path[0]; // เดินทีละช่อง
-    } else if (stack % 3 == 0) {
-      killer = path[Math.min(3, path.length - 1,)]; //เดินทีละ ช่อง แต่ 2 ครั้ง}
-    } else {
-      killer = path[Math.min(2, path.length - 1,)]; //เดินทีละ ช่อง แต่ 2 ครั้ง}
-      console.log(stack);
+    // เดินทีละช่องเสมอ
+    killer = path[1];
 
+    // ทิ้งรอยเท้า
+    killerTrail.push({ x: killer.x, y: killer.y });
+    if (killerTrail.length > 10) killerTrail.shift();
+
+    // กับดัก
+    if (isTrap(killer.x, killer.y)) {
+      killerPaused = true; // หยุด 1 รอบ
     }
 
     if (killer.x === player.x && killer.y === player.y) {
@@ -241,5 +304,6 @@ function moveKiller() {
     }
   }
 }
+
 
 drawMap();
