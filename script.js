@@ -101,8 +101,9 @@ function getRandomEmptyTile(exclude = [], minDistance = 0) {
     }
 
     tries++;
+   
   }
-
+  
   throw new Error("No valid spawn position found!");
 }
 
@@ -182,14 +183,14 @@ function isKillerWalkable(x, y) {
 document.addEventListener("keydown", (e) => {
   let dx = 0, dy = 0;
 
-  if (e.key === "ArrowUp") dy = -1;
-  if (e.key === "ArrowDown") dy = 1;
-  if (e.key === "ArrowLeft") dx = -1;
-  if (e.key === "ArrowRight") dx = 1;
+  if (e.key === "w") dy = -1;
+  if (e.key === "s") dy = 1;
+  if (e.key === "a") dx = -1;
+  if (e.key === "d") dx = 1;
 
   const newX = player.x + dx;
   const newY = player.y + dy;
-  if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key)) {
+  if (["w", "s", "a", "d"].includes(e.key)) {
     if (isPlayerWalkable(newX, newY)) {
       player.x = newX;
       player.y = newY;
@@ -312,8 +313,8 @@ function moveKiller() {
   stack++;
 
   let steps = 1;
-  if (stack % 3 === 0) {
-    steps = 2;
+  if (stack % 2 === 0) {
+    steps = 20;
   }
 
   // เดินตาม path ทีละก้าว โดยไม่ข้ามกำแพง
@@ -338,3 +339,12 @@ function moveKiller() {
 
 
 drawMap();
+
+function resetGame() {
+  player = getRandomEmptyTile();
+  killer = getRandomEmptyTile([player]);
+  exit = getRandomEmptyTile([player, killer]);
+  killerTrail = [];
+  stack = 0;
+  killerPaused = false;
+}
